@@ -1,0 +1,217 @@
+# THE 60-CHANNEL TOPOLOGY — EXPERIMENTAL PORTFOLIO
+## Controlled experiment network, not independent channels
+
+---
+
+## 1. TOPOLOGY OVERVIEW
+
+Total: 60 channels organized as a directed graph with 4 clusters.
+
+```
+SHORTS LAB (25) ──► LONG-FORM (20) ──► DOCUMENTARY (15 FACELess / SERIES)
+      │                    │                     │
+      └────────────────────┘                     │
+                       ▼                         │
+                  PODCAST LAB ──► COMMUNITY LAB ──┘
+                       │                          │
+                       ▼                          ▼
+                  PRODUCT LAB ──► IP LAB ──► ENTERPRISE STUDIO
+```
+
+Each cluster operates as a portfolio of controlled experiments. Every experiment has:
+- Editorial constitution (non-negotiable rules)
+- Hypothesis (what we are testing)
+- Success metrics (what validates promotion)
+- Failure guardrails (what prevents damage)
+- Memory integration (what feeds institutional intelligence)
+
+---
+
+## 2. SHORTS LAB (25 CHANNELS)
+
+**Purpose:** Sensor layer. Rapid hypothesis testing. Low production cost. High learning velocity.
+
+**Clusters:**
+
+### 2.1 FACELess (15 channels — within Shorts Lab)
+```
+1.  OMEGA-HISTORY        History / Civilization / Deep Time
+2.  OMEGA-SCIENCE        Science / Discovery / Evidence
+3.  OMEGA-BUSINESS        Business / Economics / Markets
+4.  OMEGA-TECH            Technology / AI / Computing
+5.  OMEGA-DOCUMENTARY     Documentary / Investigative / Evidence-based
+6.  OMEGA-EXPLAINER       Explainers / Visual Education / Data Narratives
+7.  OMEGA-ESSAY           Cinematic Essays / Visual Thinking
+8.  OMEGA-DATA             Data Narratives / Statistics / Visualization
+9.  OMEGA-GEOPOLITICS     Politics / Power / International Relations
+10. OMEGA-FUTURE          Future Studies / Forecasting / Scenario Planning
+11. OMEGA-PHILOSOPHY      Philosophy / Ethics / Meaning
+12. OMEGA-PSYCHOLOGY      Psychology / Mind / Behavior
+13. OMEGA-ART             Art / Aesthetics / Visual Culture
+14. OMEGA-CINEMA          Cinema Studies / Film Analysis / Visual Grammar
+15. OMEGA-INVESTIGATIVE   Investigative / Evidence / Accountability
+```
+
+**Editorial Constitution — Faceless Short:**
+- Format: 60–120 seconds vertical or square, with cinematic opening (3 sec hook) and clear information delivery
+- Visual: No synthetic emotional manipulation; every shot must have documented reason
+- Narration: Clear, authoritative, evidence-cited; no generic voiceover
+- Evidence: Every claim requires source (visible or referenced in metadata)
+- Identity: Channel identity must be visible in opening 2 seconds (logo / visual signature / color system)
+- Transformation: Viewer must gain new understanding or perspective; content must not be decorative
+- Anti-Slop: No meaningless camera movement; no AI-looking generic scenes; no cloned formats
+- Failure Guardrail: If retention drops below 30% at 30 seconds, content is abandoned and failure memory updated
+
+---
+
+### 2.2 SHORT-FORM SENSOR (10 channels — within Shorts Lab)
+```
+16. OMEGA-TEST-A         Hook Pattern Testing / Narrative Experiments
+17. OMEGA-TEST-B         Visual Format Testing / Cinematic Grammar
+18. OMEGA-TEST-C         Topic Signal Testing / Cultural Signals
+19. OMEGA-TEST-D         Character / Voice Testing / Performance Styles
+20. OMEGA-TEST-E         Question Format Testing / Audience Engagement
+21. OMEGA-TEST-F         Social-Native Format / Platform-Specific Experiments
+22. OMEGA-TEST-G         Data Visualization / Information Design Tests
+23. OMEGA-TEST-H         Mixed-Media / Collage / Hybrid Visual Tests
+24. OMEGA-TEST-I         Interactive / Participatory / Audience-Driven Experiments
+25. OMEGA-TEST-J         Generative / Real-Time / Adaptive Content Tests
+```
+
+**Editorial Constitution — Sensor Short:**
+- Format: 15–60 seconds; designed for rapid signal detection
+- Hypothesis: Every video must test one explicit hypothesis (hook format, topic, visual approach)
+- Metrics: Primary metric is validated signal strength (not just views — comment quality, retention curve shape, search signal generation)
+- Memory: Every experiment writes structured result to `CREATIVE` memory (pattern validated or rejected)
+- Propagation: Validated signals (retention > 50% at 15 sec + positive comment sentiment + search signal) propagate to Long-Form cluster
+- Anti-Slop: Generic content is automatic failure; experiment must have originality claim
+
+---
+
+## 3. LONG-FORM (20 CHANNELS)
+
+**Purpose:** Deep exploration. Series architecture. Sustained audience relationships. Content-to-product bridge.
+
+**Clusters:**
+```
+1.  OMEGA-DOCUMENTARY-LF  Documentary Series / Investigative Series
+2.  OMEGA-INTERVIEW       Interview Series / Conversations / Deep Talks
+3.  OMEGA-BUSINESS-LF      Business Deep-Dives / Case Studies / Market Analysis
+4.  OMEGA-TECH-LF          Technology Deep-Dives / System Analysis
+5.  OMEGA-CULTURE-LF       Culture / Society / Human Behavior Studies
+6.  OMEGA-SCIENCE-LF       Science Series / Research Translation
+7.  OMEGA-GEOPOLITICS-LF   Geopolitics / Power / Strategy
+8.  OMEGA-ENTREPRENEUR     Entrepreneurship / Building / Execution
+9.  OMEGA-CINEMATIC-ESSAY  Cinematic Essays / Visual Thinking / Film Studies
+10. OMEGA-EXPERIMENT      Experiments / Challenges / Proof of Concept
+11. OMEGA-EDUCATION-LF     Education / Learning Design / Knowledge Architecture
+12. OMEGA-AI-DEEP          AI / Intelligence / Systems Thinking
+13. OMEGA-FUTURE-STUDIES   Future Studies / Scenario Planning / Forecasting
+14. OMEGA-PHILOSOPHY-LF    Philosophy / Ethics / Meaning / Values
+15. OMEGA-PSYCHOLOGY-LF    Psychology / Mind / Behavior / Change
+16. OMEGA-ART-LF           Art / Aesthetics / Visual Culture Studies
+17. OMEGA-INVESTIGATIVE-LF Investigative Series / Evidence / Accountability
+18. OMEGA-PODCAST-VIDEO    Video Podcast / Conversation Series
+19. OMEGA-LIVE             Live Production / Real-Time / Event-Based
+20. OMEGA-HYBRID            Hybrid Formats / Mixed-Media / Experimental Long-Form
+```
+
+**Editorial Constitution — Long-Form:**
+- Format: 15–90 minutes; structured in acts or chapters with emotional progression
+- Opening: First 60 seconds must establish premise, identity, and emotional promise
+- Evidence: Every major claim must be sourced; evidence visible or clearly referenced
+- Visual: Cinematic quality (not just talking heads); intentional shot design; emotional progression through visual language
+- Narration / Voice: Authored voice — must feel like a specific human perspective, not generic AI narration
+- Transformation: Viewer must emerge changed in some way (new understanding, new emotional state, new perspective, new capability)
+- Series Architecture: Individual videos must also function as chapters in larger series; series must have cumulative thesis
+- Memory Integration: Every episode writes to `CREATIVE` (format patterns), `AUDIENCE` (retention curves), `WORLD` (facts presented), `FAILURE` (if quality failures)
+
+---
+
+## 4. DOCUMENTARY CLUSTER (Embedded in Faceless + Long-Form)
+
+Not separate channels, but a cross-cutting format cluster that operates across:
+- `OMEGA-DOCUMENTARY` (Short-form documentary)
+- `OMEGA-DOCUMENTARY-LF` (Long-form documentary series)
+- `OMEGA-INVESTIGATIVE` (Investigative short-form)
+- `OMEGA-INVESTIGATIVE-LF` (Investigative long-form)
+
+**Documentary Constitution:**
+- Truth: Every claim must be verifiable; sources must exist and be referenceable
+- Visual Evidence: Footage, data visualization, expert testimony, or primary documentation must support claims
+- Narrative Integrity: Story must follow evidence; evidence must not be shaped to fit pre-existing narrative
+- Authorial Identity: Documentary must express a specific perspective or question, not pretend neutrality
+- Ethical Standards: No fabrication, no synthetic evidence, no misleading editing
+- Anti-Slop: Cinematic quality must serve truth; beautiful shots must add information or emotional truth, not decoration
+
+---
+
+## 5. CHANNEL GRAPH OPERATIONS (OMEGA-C5)
+
+### 5.1 Propagation Rules
+
+```
+SHORTS LAB SIGNAL DETECTED
+  ↓ [Validation: retention > 50% at 15 sec + positive sentiment + search signal]
+VALIDATED SIGNAL
+  ↓ [Channel Graph Operator evaluates transformation requirements]
+TRANSFORMED OUTPUT DESIGNED (not duplicated — transformed for new format / audience / depth)
+  ↓ [Long-Form Channel Design]
+LONG-FORM PRODUCTION
+  ↓ [Series Validation]
+DOCUMENTARY / SERIES EXPANSION
+  ↓ [Product / Enterprise Integration]
+FULL ECOSYSTEM PROPAGATION
+```
+
+**Transformation Requirements:**
+Every propagated output must:
+- Change format (not just length — structure, visual approach, emotional architecture)
+- Change depth (add evidence, analysis, or perspective not present in source)
+- Change audience relationship (serve different need in audience journey)
+- Reference source (memory graph edge from new output to source signal)
+- Add new creative contribution (not mechanical duplication)
+
+---
+
+## 6. CHANNEL STATE TRACKING (OMEGA-E1)
+
+Every channel maintains persistent state:
+
+```json
+{
+  "channel_id": "OMEGA-DOCUMENTARY",
+  "cluster": "FACELess",
+  "state": "ACTIVE | EXPERIMENT | PAUSED | RETIRED",
+  "latest_experiment": {
+    "experiment_id": "...",
+    "hypothesis": "...",
+    "status": "RUNNING | VALIDATED | REJECTED",
+    "metrics": {"retention_30s": 0.62, "retention_60s": 0.45, "positive_sentiment": 0.78},
+    "propagation_triggered": false,
+    "memory_updates": ["CREATIVE:hook_pattern_42", "AUDIENCE:retention_curve_17"]
+  },
+  "constitution_compliance": {
+    "last_check": "...",
+    "violations": 0,
+    "status": "COMPLIANT"
+  }
+}
+```
+
+---
+
+## 7. PORTFOLIO MANAGEMENT (OMEGA-M1)
+
+Self-evolution engine evaluates portfolio performance:
+- Which experiments should be promoted?
+- Which channels should be retired?
+- Which new experiments should be launched?
+- What resource reallocation is needed?
+
+Every portfolio decision requires:
+- Evidence from audience memory
+- Evidence from creative memory
+- Evidence from strategic memory (thesis alignment)
+- Red team review for major changes
+- Human approval for structural changes

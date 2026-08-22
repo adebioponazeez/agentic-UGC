@@ -1,0 +1,92 @@
+version: '3.9'
+
+services:
+  omega-orchestrator:
+    build: .
+    container_name: omega-master
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - OMEGA_MEMORY_DB=/data/omega_memory.db
+      - OMEGA_LOG_LEVEL=INFO
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./data:/data
+      - ./logs:/logs
+      - ./core:/app/core
+      - ./docs:/app/docs
+      - ./workflows:/app/workflows
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - omega-net
+    restart: unless-stopped
+    command: ["python", "-m", "core.agents.orchestrator"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: omega-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - omega-net
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: omega-postgres
+    environment:
+      POSTGRES_DB: omega_memory
+      POSTGRES_USER: omega
+      POSTGRES_PASSWORD: omega_secure_2026
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - omega-net
+    restart: unless-stopped
+
+  analytics-dashboard:
+    image: grafana/grafana:latest
+    container_name: omega-analytics
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=omega
+      - GF_SECURITY_ADMIN_PASSWORD=omega_view_2026
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./analytics/dashboards:/etc/grafana/provisioning/dashboards
+    networks:
+      - omega-net
+    restart: unless-stopped
+
+  red-team-service:
+    image: python:3.12-slim
+    container_name: omega-redteam
+    working_dir: /app
+    volumes:
+      - ./governance/redteam:/app/redteam
+      - ./core:/app/core
+    networks:
+      - omega-net
+    command: ["python", "-c", "print('Red Team Council online — OMEGA-M2 ready')"]
+    restart: "no"
+
+volumes:
+  redis-data:
+  pg-data:
+  grafana-data:
+
+networks:
+  omega-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
