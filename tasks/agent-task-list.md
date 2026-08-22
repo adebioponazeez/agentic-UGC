@@ -6,7 +6,7 @@
 | T-002 | Done | P0 | Durable digest-bound resume | FR-005–009 | Unit + CLI journey | Human |
 | T-003 | Done | P0 | Provider resilience controls | FR-004 | Runtime tests | Engineering |
 | T-004 | Done | P0 | Version checkpoints and DB migration | INV-009, NFR-008 | Compatibility tests | Engineering |
-| T-005 | Ready | P0 | Domain quality/safety eval gates | TD-001 | Dataset + hard failures | Product/safety |
+| T-005 | Partial | P0 | Domain quality/safety eval gates | TD-001 | Dataset + hard failures | Product/safety |
 | T-006 | Partial | P0 | Typed tool capability registry | FR-012 | Sandbox/policy tests | Security/human |
 | T-007 | Done | P0 | Grounded research adapter | FR-013 | Citation tests | Research |
 | T-008 | Ready | P1 | OpenTelemetry exporter | TD-006 | Trace/redaction tests | Operations |
@@ -17,3 +17,4 @@
 | T-013 | Done | P1 | Local, server, and cloud deployment references | NFR-004–008 | Docker/K8s configs | Operations |
 | T-014 | Done | P0 | API principal, RBAC, and tenant isolation | FR-015–017 | Role/tenant boundary tests | Security |
 | T-015 | Partial | P1 | Structured request tracing | TD-006 | Request IDs and JSON events | Operations |
+| T-016 | Done | P0 | Deterministic critical policy gates and fail-closed stopping | FR-018–019 | Policy/remediation tests | Product/safety |

@@ -1,5 +1,17 @@
 # Release notes
 
+## v0.5.0 — deterministic critical policy gates
+
+Quality and authorization are now separate. Stable deterministic rules block approval bypass,
+unauthorized identity simulation, uncited grounded outputs, incomplete UGC rights/disclosure plans,
+and high-risk plans without human approval and rollback. Blocked candidates enter bounded remediation;
+if blockers remain, the run stops as `blocked_by_policy` and no downstream stage executes.
+
+Policy findings travel with candidates, checkpoints, events, metrics, API responses, and the operator
+console. This baseline is intentionally narrow and does not replace domain factuality datasets,
+calibrated model evaluation, or human safety review.
+
+
 ## v0.4.0 — identity and tenant boundary
 
 - Bearer credentials now resolve server-side to immutable subject, tenant, and role principals.

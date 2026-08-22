@@ -25,6 +25,7 @@ A provider-agnostic, local-first cognitive orchestration kernel for **agentic UG
 - SSRF-filtered public-source snapshots and citation-ready evidence bundles
 - Content-addressed artifact storage and integrity-verifiable UGC ZIP exports
 - Executable fail-closed tool capability, approval, and idempotency policy
+- Deterministic critical policy gates with bounded remediation and downstream stop
 - Docker Compose and security-hardened Kubernetes deployment references
 
 ## Quick start
@@ -105,6 +106,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 - [Identity, roles, and tenant isolation](docs/03-technical-spec/identity-and-tenancy.md)
 - [API and data contracts](docs/04-api-and-data-design/contracts.md)
 - [Test plan and release gates](docs/05-test-specification/test-plan.md)
+- [Runtime policy and domain gates](docs/05-test-specification/runtime-policy-gates.md)
 - [Threat model](docs/06-security-and-reliability/threat-model.md)
 - [Agent task list](tasks/agent-task-list.md)
 - [Changelog](changelog/CHANGELOG.md)

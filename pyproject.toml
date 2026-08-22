@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tetrative-agentic-os"
-version = "0.4.0"
+version = "0.5.0"
 description = "Provider-agnostic, local-first cognitive orchestration kernel for UGC and venture creation"
 readme = "README.md"
 requires-python = ">=3.11"

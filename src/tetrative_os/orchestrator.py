@@ -156,6 +156,24 @@ class Orchestrator:
             results.append(result)
             outputs[stage.name] = result.selected.content
             payload = self._checkpoint_payload(goal, results, index + 1, started)
+            if result.status == "blocked":
+                self.memory.save_checkpoint(run_id, "blocked_by_policy", payload)
+                self.memory.record(
+                    run_id,
+                    stage.name,
+                    "run_blocked_by_policy",
+                    {"findings": result.selected.policy_findings},
+                )
+                return RunResult(
+                    run_id,
+                    goal,
+                    "blocked_by_policy",
+                    results,
+                    result.selected.content,
+                    self._metrics(results),
+                    started,
+                    now(),
+                )
             if stage.human_gate and not auto_approve:
                 digest = self._approval_digest(run_id, stage.name, result.selected.content)
                 self.memory.save_checkpoint(
@@ -222,11 +240,14 @@ class Orchestrator:
             candidate = Candidate(text, spec.name, iteration=0)
             score = self.evaluator.assess(goal, stage, candidate)
             candidate.score, candidate.critique = score.total, score.critique
+            candidate.policy_findings = [finding.to_dict() for finding in score.policy.findings]
             candidates.append(candidate)
 
-        best = max(candidates, key=lambda item: item.score)
+        best = max(candidates, key=lambda item: (not self._candidate_blocked(item), item.score))
         attempts = 1
-        while best.score < stage.minimum_score and attempts < self.max_iterations:
+        while (
+            best.score < stage.minimum_score or self._candidate_blocked(best)
+        ) and attempts < self.max_iterations:
             revised = self.provider.generate(
                 spec.system_prompt,
                 f"Revise the candidate to directly answer the critique. Keep valid parts; remove unsupported "
@@ -236,11 +257,15 @@ class Orchestrator:
             challenger = Candidate(revised, spec.name, iteration=attempts)
             score = self.evaluator.assess(goal, stage, challenger)
             challenger.score, challenger.critique = score.total, score.critique
+            challenger.policy_findings = [finding.to_dict() for finding in score.policy.findings]
             candidates.append(challenger)
-            best = max(candidates, key=lambda item: item.score)
+            best = max(candidates, key=lambda item: (not self._candidate_blocked(item), item.score))
             attempts += 1
 
-        status = "passed" if best.score >= stage.minimum_score else "degraded"
+        if self._candidate_blocked(best):
+            status = "blocked"
+        else:
+            status = "passed" if best.score >= stage.minimum_score else "degraded"
         self.memory.record(
             run_id,
             stage.name,
@@ -249,6 +274,10 @@ class Orchestrator:
         )
         return StageResult(stage.name, status, best, candidates, attempts, stage.human_gate)
 
+    @staticmethod
+    def _candidate_blocked(candidate: Candidate) -> bool:
+        return any(finding.get("severity") == "block" for finding in candidate.policy_findings)
+
     def _metrics(self, results: list[StageResult]) -> dict[str, float | int]:
         scores = [result.selected.score for result in results]
         runtime = self._cumulative_runtime_metrics()
@@ -256,6 +285,10 @@ class Orchestrator:
             "stages_completed": len(results),
             "average_quality": round(sum(scores) / len(scores), 4) if scores else 0.0,
             "degraded_stages": sum(result.status == "degraded" for result in results),
+            "blocked_stages": sum(result.status == "blocked" for result in results),
+            "policy_findings": sum(
+                len(result.selected.policy_findings) for result in results
+            ),
             "total_candidates": sum(len(result.candidates) for result in results),
             **runtime,
         }

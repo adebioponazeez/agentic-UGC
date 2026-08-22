@@ -4,6 +4,10 @@
 
 ### Added
 
+- Deterministic critical policy engine with stable rule IDs and remediation.
+- Fail-closed `blocked_by_policy` run state that stops downstream execution.
+- UGC rights/disclosure, grounded-citation, high-risk approval/rollback, identity, and safeguard gates.
+- Policy findings in candidate artifacts, metrics, checkpoints, events, API responses, and console UI.
 - Server-resolved API principals with subject, tenant, and roles.
 - Viewer/operator/approver/admin route authorization and tenant-isolated storage roots.
 - Authenticated approval attribution and cross-tenant run/artifact denial.

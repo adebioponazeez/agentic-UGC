@@ -139,7 +139,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     _migrate_legacy_default_tenant(settings)
     app = FastAPI(
         title="Tetrative Agentic OS",
-        version="0.4.0",
+        version="0.5.0",
         description="Human-governed orchestration for grounded venture and UGC production.",
     )
     app.state.settings = settings

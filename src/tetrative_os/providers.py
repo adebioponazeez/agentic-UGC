@@ -98,5 +98,9 @@ class DeterministicMockProvider:
             "### Execution\n1. Validate the highest-risk assumption.\n"
             "2. Produce one measurable artifact.\n"
             "3. Instrument outcomes and feed evidence into the next iteration.\n\n"
+            "### Governance\nHuman approval is required before execution. Define stop conditions, "
+            "rollback, and escalation ownership. Verify consent, likeness and IP rights, licensing, "
+            "and synthetic or sponsored-content disclosure. When evidence is supplied, verify and "
+            "cite the relevant source such as [S1].\n\n"
             "### Risks\nUnverified demand, weak evidence, model hallucination, and premature scaling.\n"
         )

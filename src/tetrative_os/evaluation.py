@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 
 from .models import Candidate, Goal, Stage
+from .policy import PolicyEngine, PolicyReport
 from .providers import ModelProvider
 
 
@@ -12,6 +13,7 @@ class Score:
     total: float
     details: dict[str, float]
     critique: str
+    policy: PolicyReport
 
 
 class Evaluator:
@@ -26,6 +28,7 @@ class Evaluator:
         self.provider = provider
         self.evaluator_prompt = evaluator_prompt
         self.redteam_prompt = redteam_prompt
+        self.policy = PolicyEngine()
 
     def assess(self, goal: Goal, stage: Stage, candidate: Candidate) -> Score:
         content = candidate.content
@@ -39,9 +42,11 @@ class Evaluator:
         if grounded_run:
             details["citation_grounding"] = 1.0 if re.search(r"\[S\d+]", content) else 0.0
         total = sum(details.values()) / len(details)
+        policy = self.policy.evaluate(goal, stage, content)
         critique = self.provider.generate(
             self.redteam_prompt,
             f"GOAL: {goal.objective}\nSTAGE: {stage.name}\nCANDIDATE:\n{content}\n\n"
+            f"DETERMINISTIC POLICY FINDINGS:\n{policy.as_prompt()}\n\n"
             "Cross-examine this. Name the strongest failure mode, unsupported assumption, ethical risk, "
             "and one decisive falsification test.",
             temperature=0.0,
@@ -52,4 +57,5 @@ class Evaluator:
             f"and risk control. Deterministic score is {total:.2f}. Explain what must improve:\n{content}",
             temperature=0.0,
         )
-        return Score(total, details, f"{critique}\n\n### Judge\n{judge}")
+        policy_section = f"### Deterministic policy\n{policy.as_prompt()}"
+        return Score(total, details, f"{policy_section}\n\n{critique}\n\n### Judge\n{judge}", policy)

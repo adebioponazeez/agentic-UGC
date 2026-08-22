@@ -6,7 +6,13 @@ from pathlib import Path
 from typing import Any
 
 DATABASE_SCHEMA_VERSION = 1
-CHECKPOINT_STATUSES = {"running", "awaiting_human_approval", "failed", "completed"}
+CHECKPOINT_STATUSES = {
+    "running",
+    "awaiting_human_approval",
+    "blocked_by_policy",
+    "failed",
+    "completed",
+}
 
 
 class DatabaseVersionError(RuntimeError):

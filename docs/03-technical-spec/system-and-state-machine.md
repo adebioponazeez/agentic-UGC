@@ -17,6 +17,7 @@
 
 ```text
 NEW → RUNNING → AWAITING_HUMAN_APPROVAL → RUNNING → COMPLETED
+          ├──────────────────────────────→ BLOCKED_BY_POLICY
           └──────────────────────────────→ FAILED
 ```
 
@@ -27,6 +28,7 @@ NEW → RUNNING → AWAITING_HUMAN_APPROVAL → RUNNING → COMPLETED
 | RUNNING | gated stage complete | auto-approve false | AWAITING | Orchestrator |
 | AWAITING | approve | status/digest match; approver present | RUNNING | Human boundary |
 | RUNNING | final stage complete | no gate/error | COMPLETED | Orchestrator |
+| RUNNING | critical policy finding remains after remediation | any blocker | BLOCKED_BY_POLICY | Policy engine |
 | RUNNING | exception | stage/runtime/storage failure | FAILED | Orchestrator |
 
 COMPLETED→RUNNING, FAILED→COMPLETED without recovery, and AWAITING→RUNNING on stale digest are

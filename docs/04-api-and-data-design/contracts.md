@@ -11,7 +11,7 @@ and timestamp. Domains: `meta`, `ugc`, `venture`, `ecosystem`.
 {
   "run_id": "uuid",
   "goal": {},
-  "status": "completed|awaiting_human_approval",
+  "status": "completed|awaiting_human_approval|blocked_by_policy",
   "stages": [],
   "final_output": "markdown",
   "metrics": {},
@@ -21,9 +21,10 @@ and timestamp. Domains: `meta`, `ugc`, `venture`, `ecosystem`.
 }
 ```
 
-`approval_required` is null unless paused. Resume requires run ID, exact SHA-256, non-empty approver,
-and same store. Preconditions: checkpoint exists, awaits approval, versions are supported, digest
-matches.
+`approval_required` is null unless paused. Every candidate includes `policy_findings`, a list of stable
+rule ID, severity, message, and remediation objects. Resume requires run ID, exact SHA-256,
+authenticated approver identity, and the same tenant store. Preconditions: checkpoint exists, awaits
+approval, versions are supported, and digest matches.
 
 Runtime metrics are cumulative across resume. Character counts are not token or billing metrics.
 Adding optional fields is compatible; removing/renaming fields, changing meaning, or changing legal

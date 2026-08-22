@@ -41,6 +41,8 @@
 | FR-015 | Resolve credentials to server-side subject, tenant, and roles. | Production P0 |
 | FR-016 | Derive approval actor from authenticated identity, never request text. | Production P0 |
 | FR-017 | Prevent run, evidence, and artifact access across tenants. | Production P0 |
+| FR-018 | Critical policy findings override aggregate quality and stop the run. | Production P0 |
+| FR-019 | Policy-blocked candidates receive bounded remediation, never silent override. | Production P0 |
 
 ## Nonfunctional requirements
 

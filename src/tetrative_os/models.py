@@ -70,6 +70,7 @@ class Candidate:
     score: float = 0.0
     critique: str = ""
     iteration: int = 0
+    policy_findings: list[dict[str, str]] = field(default_factory=list)
 
 
 @dataclass(slots=True)
