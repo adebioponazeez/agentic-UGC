@@ -4,7 +4,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+build/
+dist/
 .tetrative/
+.tetrative-preview/
 run.json
 *-run.json
 .env

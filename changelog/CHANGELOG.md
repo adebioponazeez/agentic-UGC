@@ -4,6 +4,13 @@
 
 ### Added
 
+- FastAPI operator service and responsive web control console.
+- Safe public-source collection, immutable evidence bundles, and grounded-run attachment.
+- Content-addressed artifact storage and integrity-verifiable UGC ZIP exports.
+- Fail-closed typed tool policy registry with capability and idempotency enforcement.
+- Docker Compose and single-replica Kubernetes deployment references.
+- API, artifact, exporter, network-policy, and tool-policy test coverage.
+
 - Numbered specification workspace and authority rules.
 - Product requirements, state machine, data contracts, tests, threat model, operations, drift policy,
   ADR, technical-debt register, task list, review log, and release gates.

@@ -5,7 +5,6 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-
 DATABASE_SCHEMA_VERSION = 1
 CHECKPOINT_STATUSES = {"running", "awaiting_human_approval", "failed", "completed"}
 
@@ -132,13 +131,37 @@ class MemoryStore:
         except (json.JSONDecodeError, TypeError) as exc:
             raise RuntimeError(f"Checkpoint {run_id} contains invalid JSON") from exc
         if not isinstance(payload, dict):
-            raise RuntimeError(f"Checkpoint {run_id} payload must be an object")
+            raise TypeError(f"Checkpoint {run_id} payload must be an object")
         return {
             "status": row["status"],
             "payload": payload,
             "artifact_hash": row["artifact_hash"],
             "updated_at": row["updated_at"],
         }
+
+    def list_checkpoints(self, *, limit: int = 50) -> list[dict[str, Any]]:
+        if not 1 <= limit <= 200:
+            raise ValueError("Checkpoint list limit must be between one and 200")
+        rows = self.db.execute(
+            "SELECT run_id, status, payload, artifact_hash, updated_at "
+            "FROM checkpoints ORDER BY updated_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        results = []
+        for row in rows:
+            payload = json.loads(row["payload"])
+            results.append(
+                {
+                    "run_id": row["run_id"],
+                    "status": row["status"],
+                    "artifact_hash": row["artifact_hash"],
+                    "updated_at": row["updated_at"],
+                    "goal": payload.get("goal", {}),
+                    "next_stage": payload.get("next_stage", 0),
+                    "stage_count": len(payload.get("results", [])),
+                }
+            )
+        return results
 
     def approve(self, run_id: str, artifact_hash: str, approver: str) -> None:
         if not approver.strip():

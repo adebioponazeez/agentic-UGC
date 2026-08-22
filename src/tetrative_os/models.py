@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 from uuid import uuid4
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class Risk(str, Enum):
@@ -38,6 +38,10 @@ class Goal:
             raise ValueError("Goal objective exceeds 10,000 characters")
         if len(self.constraints) > 100 or len(self.success_metrics) > 100:
             raise ValueError("Goal accepts at most 100 constraints and 100 success metrics")
+        if sum(map(len, self.constraints)) > 50_000:
+            raise ValueError("Goal constraints exceed the 50,000 character context budget")
+        if sum(map(len, self.success_metrics)) > 10_000:
+            raise ValueError("Goal success metrics exceed the 10,000 character context budget")
 
 
 @dataclass(slots=True)

@@ -3,5 +3,5 @@
 from .models import Goal, RunResult
 from .orchestrator import Orchestrator
 
-__all__ = ["Goal", "RunResult", "Orchestrator"]
-__version__ = "0.1.0"
+__all__ = ["Goal", "Orchestrator", "RunResult"]
+__version__ = "0.3.0"

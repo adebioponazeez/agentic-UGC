@@ -32,9 +32,12 @@ class Evaluator:
         details = {
             "specificity": min(1.0, len(content) / 900),
             "structure": min(1.0, len(re.findall(r"^#{1,3} |^\d+\.", content, re.MULTILINE)) / 4),
-            "executability": 1.0 if re.search(r"metric|test|next|execute|validate", content, re.I) else 0.35,
-            "risk_awareness": 1.0 if re.search(r"risk|unknown|assumption|failure", content, re.I) else 0.25,
+            "executability": 1.0 if re.search(r"metric|test|next|execute|validate", content, re.IGNORECASE) else 0.35,
+            "risk_awareness": 1.0 if re.search(r"risk|unknown|assumption|failure", content, re.IGNORECASE) else 0.25,
         }
+        grounded_run = any("SOURCE-GROUNDED EVIDENCE" in item for item in goal.constraints)
+        if grounded_run:
+            details["citation_grounding"] = 1.0 if re.search(r"\[S\d+]", content) else 0.0
         total = sum(details.values()) / len(details)
         critique = self.provider.generate(
             self.redteam_prompt,

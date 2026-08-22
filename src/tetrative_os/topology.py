@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from .models import AgentSpec, Stage
 
-
 WORKFLOW_VERSION = "1.0.0"
 
 

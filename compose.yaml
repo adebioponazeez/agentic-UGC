@@ -1,0 +1,22 @@
+services:
+  tetrative:
+    build: .
+    ports:
+      - "${TETRATIVE_PORT:-8000}:8000"
+    environment:
+      TETRATIVE_ENV: ${TETRATIVE_ENV:-development}
+      TETRATIVE_SERVER_API_KEY: ${TETRATIVE_SERVER_API_KEY:-local-development-key}
+      TETRATIVE_DEFAULT_MOCK: ${TETRATIVE_DEFAULT_MOCK:-true}
+      TETRATIVE_BASE_URL: ${TETRATIVE_BASE_URL:-http://host.docker.internal:11434/v1}
+      TETRATIVE_MODEL: ${TETRATIVE_MODEL:-qwen3:8b}
+      TETRATIVE_API_KEY: ${TETRATIVE_API_KEY:-local}
+      TETRATIVE_DATA_DIR: /data
+    volumes:
+      - tetrative-data:/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  tetrative-data:

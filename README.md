@@ -21,20 +21,40 @@ A provider-agnostic, local-first cognitive orchestration kernel for **agentic UG
 - Local model support through any OpenAI-compatible endpoint (Ollama, vLLM, llama.cpp)
 - Deterministic offline mode for CI and architecture demos
 - JSON run artifacts suitable for dashboards, audits, and later training/evaluation
+- Authenticated REST API and responsive operator web console
+- SSRF-filtered public-source snapshots and citation-ready evidence bundles
+- Content-addressed artifact storage and integrity-verifiable UGC ZIP exports
+- Executable fail-closed tool capability, approval, and idempotency policy
+- Docker Compose and security-hardened Kubernetes deployment references
 
 ## Quick start
 
-Requires Python 3.11+ and has no runtime dependencies.
+Requires Python 3.11+.
 
 ```bash
 python -m venv .venv
 . .venv/bin/activate
-pip install -e .
+pip install -e '.[dev]'
 
-# Prove the full orchestration path without a model server
+# Launch the operator API and web console on http://localhost:8000
+export TETRATIVE_SERVER_API_KEY=local-development-key
+tetrative-api
+```
+
+The console can collect immutable public-source evidence, run all four workflows, stop at exact human
+approval gates, resume reviewed runs, inspect events, and download integrity-verifiable UGC packages.
+For CLI-only operation:
+
+```bash
 tetrative "Launch an evidence-led creator ecosystem for Nigerian founders" \
   --domain ecosystem --audience "solo founders in Lagos" --mock --auto-approve \
   --metric "10 paid design partners" --output ecosystem-run.json
+```
+
+Docker local deployment:
+
+```bash
+docker compose up --build
 ```
 
 Local-first real model (example with an already-running Ollama OpenAI-compatible server):
@@ -80,6 +100,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 - **[Canonical specification index](docs/README.md)**
 - [Product requirements and acceptance](docs/02-product-requirements/product-requirements.md)
 - [System state machine](docs/03-technical-spec/system-and-state-machine.md)
+- [Implemented production vertical slice](docs/03-technical-spec/production-vertical-slice.md)
 - [API and data contracts](docs/04-api-and-data-design/contracts.md)
 - [Test plan and release gates](docs/05-test-specification/test-plan.md)
 - [Threat model](docs/06-security-and-reliability/threat-model.md)

@@ -36,7 +36,7 @@ class OpenAICompatibleProvider:
             raise ValueError("Provider limits must be positive")
 
     @classmethod
-    def from_env(cls) -> "OpenAICompatibleProvider":
+    def from_env(cls) -> OpenAICompatibleProvider:
         return cls(
             base_url=os.getenv("TETRATIVE_BASE_URL", "http://localhost:11434/v1"),
             model=os.getenv("TETRATIVE_MODEL", "qwen3:8b"),

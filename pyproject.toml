@@ -4,22 +4,30 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tetrative-agentic-os"
-version = "0.1.0"
+version = "0.3.0"
 description = "Provider-agnostic, local-first cognitive orchestration kernel for UGC and venture creation"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [{name = "agentic-UGC contributors"}]
-dependencies = []
+dependencies = [
+  "fastapi>=0.115,<1",
+  "pydantic>=2.10,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["httpx>=0.28,<1", "pytest>=8", "ruff>=0.6"]
 
 [project.scripts]
 tetrative = "tetrative_os.cli:main"
+tetrative-api = "tetrative_os.api:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+tetrative_os = ["web/*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -12,14 +12,13 @@ from .memory import MemoryStore
 from .models import Candidate, Goal, Risk, RunResult, Stage, StageResult
 from .providers import DeterministicMockProvider, ModelProvider
 from .runtime import ResilientProvider
-from .topology import AGENTS, WORKFLOWS, WORKFLOW_VERSION
-
+from .topology import AGENTS, WORKFLOW_VERSION, WORKFLOWS
 
 CHECKPOINT_SCHEMA_VERSION = 1
 
 
 def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 class ApprovalError(ValueError):
