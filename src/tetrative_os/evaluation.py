@@ -1,0 +1,61 @@
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass
+
+from .models import Candidate, Goal, Stage
+from .policy import PolicyEngine, PolicyReport
+from .providers import ModelProvider
+
+
+@dataclass(slots=True)
+class Score:
+    total: float
+    details: dict[str, float]
+    critique: str
+    policy: PolicyReport
+
+
+class Evaluator:
+    """Hybrid deterministic checks + model cross-examination.
+
+    Deterministic scoring keeps control flow reliable even when a judge model ignores formatting.
+    The judge's critique provides semantic pressure while production deployments can replace this
+    scorer with calibrated task-specific evals.
+    """
+
+    def __init__(self, provider: ModelProvider, evaluator_prompt: str, redteam_prompt: str) -> None:
+        self.provider = provider
+        self.evaluator_prompt = evaluator_prompt
+        self.redteam_prompt = redteam_prompt
+        self.policy = PolicyEngine()
+
+    def assess(self, goal: Goal, stage: Stage, candidate: Candidate) -> Score:
+        content = candidate.content
+        details = {
+            "specificity": min(1.0, len(content) / 900),
+            "structure": min(1.0, len(re.findall(r"^#{1,3} |^\d+\.", content, re.MULTILINE)) / 4),
+            "executability": 1.0 if re.search(r"metric|test|next|execute|validate", content, re.IGNORECASE) else 0.35,
+            "risk_awareness": 1.0 if re.search(r"risk|unknown|assumption|failure", content, re.IGNORECASE) else 0.25,
+        }
+        grounded_run = any("SOURCE-GROUNDED EVIDENCE" in item for item in goal.constraints)
+        if grounded_run:
+            details["citation_grounding"] = 1.0 if re.search(r"\[S\d+]", content) else 0.0
+        total = sum(details.values()) / len(details)
+        policy = self.policy.evaluate(goal, stage, content)
+        critique = self.provider.generate(
+            self.redteam_prompt,
+            f"GOAL: {goal.objective}\nSTAGE: {stage.name}\nCANDIDATE:\n{content}\n\n"
+            f"DETERMINISTIC POLICY FINDINGS:\n{policy.as_prompt()}\n\n"
+            "Cross-examine this. Name the strongest failure mode, unsupported assumption, ethical risk, "
+            "and one decisive falsification test.",
+            temperature=0.0,
+        )
+        judge = self.provider.generate(
+            self.evaluator_prompt,
+            f"Evaluate this {stage.name} output for truthfulness, relevance, novelty, execution readiness, "
+            f"and risk control. Deterministic score is {total:.2f}. Explain what must improve:\n{content}",
+            temperature=0.0,
+        )
+        policy_section = f"### Deterministic policy\n{policy.as_prompt()}"
+        return Score(total, details, f"{policy_section}\n\n{critique}\n\n### Judge\n{judge}", policy)

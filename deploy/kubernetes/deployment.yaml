@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tetrative
+spec:
+  # Keep at one until the Postgres/durable-runtime adapter replaces SQLite.
+  replicas: 1
+  selector:
+    matchLabels: {app: tetrative}
+  template:
+    metadata:
+      labels: {app: tetrative}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: api
+          image: ghcr.io/replace/tetrative:220.0.0
+          ports:
+            - {name: http, containerPort: 8000}
+          env:
+            - {name: TETRATIVE_ENV, value: production}
+            - {name: TETRATIVE_DATA_DIR, value: /data}
+            - name: TETRATIVE_API_KEYS_JSON
+              valueFrom: {secretKeyRef: {name: tetrative-secrets, key: api-keys-json}}
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 15
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: "1", memory: 1Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: ["ALL"]}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+            - {name: tmp, mountPath: /tmp}
+      volumes:
+        - name: data
+          persistentVolumeClaim: {claimName: tetrative-data}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tetrative
+spec:
+  selector: {app: tetrative}
+  ports:
+    - {name: http, port: 80, targetPort: http}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tetrative-data
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests: {storage: 10Gi}

@@ -1,0 +1,313 @@
+from __future__ import annotations
+
+import json
+import sqlite3
+from pathlib import Path
+from typing import Any
+
+DATABASE_SCHEMA_VERSION = 2
+CHECKPOINT_STATUSES = {
+    "running",
+    "awaiting_human_approval",
+    "blocked_by_policy",
+    "failed",
+    "completed",
+}
+
+
+class DatabaseVersionError(RuntimeError):
+    """Raised when storage is newer than this binary can safely interpret."""
+
+
+class MemoryStore:
+    """Append-oriented episodic memory and durable run state, backed by SQLite."""
+
+    def __init__(self, path: str | Path = ".tetrative/memory.db") -> None:
+        self.path = Path(path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.db = sqlite3.connect(self.path, timeout=5.0)
+        self.db.row_factory = sqlite3.Row
+        self.db.execute("PRAGMA foreign_keys=ON")
+        self.db.execute("PRAGMA busy_timeout=5000")
+        self.db.execute("PRAGMA journal_mode=WAL")
+        self._migrate()
+
+    def _migrate(self) -> None:
+        current = int(self.db.execute("PRAGMA user_version").fetchone()[0])
+        if current > DATABASE_SCHEMA_VERSION:
+            self.db.close()
+            raise DatabaseVersionError(
+                f"Database schema {current} is newer than supported {DATABASE_SCHEMA_VERSION}"
+            )
+        if current < 1:
+            self.db.executescript(
+                """
+                BEGIN;
+                CREATE TABLE IF NOT EXISTS events (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  run_id TEXT NOT NULL, stage TEXT NOT NULL, kind TEXT NOT NULL,
+                  payload TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS lessons (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  domain TEXT NOT NULL, lesson TEXT NOT NULL, score REAL NOT NULL,
+                  evidence TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS checkpoints (
+                  run_id TEXT PRIMARY KEY, status TEXT NOT NULL, payload TEXT NOT NULL,
+                  artifact_hash TEXT, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS approvals (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT NOT NULL,
+                  artifact_hash TEXT NOT NULL, approver TEXT NOT NULL,
+                  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                  UNIQUE(run_id, artifact_hash)
+                );
+                PRAGMA user_version=1;
+                COMMIT;
+                """
+            )
+        if current < 2:
+            self.db.executescript(
+                """
+                BEGIN;
+                CREATE TABLE IF NOT EXISTS outcomes (
+                  outcome_id TEXT PRIMARY KEY,
+                  status TEXT NOT NULL,
+                  payload TEXT NOT NULL,
+                  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                  updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS outcome_observations (
+                  observation_id TEXT PRIMARY KEY,
+                  outcome_id TEXT NOT NULL,
+                  metric_name TEXT NOT NULL,
+                  value REAL NOT NULL,
+                  payload TEXT NOT NULL,
+                  observed_at TEXT NOT NULL,
+                  FOREIGN KEY(outcome_id) REFERENCES outcomes(outcome_id)
+                );
+                CREATE INDEX IF NOT EXISTS idx_observations_outcome_time
+                  ON outcome_observations(outcome_id, observed_at);
+                CREATE TABLE IF NOT EXISTS outcome_decisions (
+                  decision_id TEXT PRIMARY KEY,
+                  outcome_id TEXT NOT NULL,
+                  kind TEXT NOT NULL,
+                  payload TEXT NOT NULL,
+                  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                  FOREIGN KEY(outcome_id) REFERENCES outcomes(outcome_id)
+                );
+                CREATE TABLE IF NOT EXISTS action_ledger (
+                  action_id TEXT PRIMARY KEY,
+                  outcome_id TEXT NOT NULL,
+                  authorization TEXT NOT NULL,
+                  payload TEXT NOT NULL,
+                  created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                  FOREIGN KEY(outcome_id) REFERENCES outcomes(outcome_id)
+                );
+                PRAGMA user_version=2;
+                COMMIT;
+                """
+            )
+
+    @property
+    def schema_version(self) -> int:
+        return int(self.db.execute("PRAGMA user_version").fetchone()[0])
+
+    def record(self, run_id: str, stage: str, kind: str, payload: dict[str, Any]) -> None:
+        self.db.execute(
+            "INSERT INTO events(run_id, stage, kind, payload) VALUES (?, ?, ?, ?)",
+            (run_id, stage, kind, json.dumps(payload, sort_keys=True)),
+        )
+        self.db.commit()
+
+    def learn(self, domain: str, lesson: str, score: float, evidence: str) -> None:
+        if not 0.0 <= score <= 1.0:
+            raise ValueError("Lesson score must be between zero and one")
+        self.db.execute(
+            "INSERT INTO lessons(domain, lesson, score, evidence) VALUES (?, ?, ?, ?)",
+            (domain, lesson, score, evidence),
+        )
+        self.db.commit()
+
+    def recall(self, domain: str, limit: int = 5) -> list[dict[str, Any]]:
+        if limit < 0 or limit > 100:
+            raise ValueError("Recall limit must be between zero and 100")
+        rows = self.db.execute(
+            "SELECT lesson, score, evidence FROM lessons WHERE domain IN (?, 'meta') "
+            "ORDER BY score DESC, id DESC LIMIT ?",
+            (domain, limit),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def events(self, run_id: str) -> list[dict[str, Any]]:
+        rows = self.db.execute(
+            "SELECT stage, kind, payload, created_at FROM events WHERE run_id=? ORDER BY id",
+            (run_id,),
+        ).fetchall()
+        return [{**dict(row), "payload": json.loads(row["payload"])} for row in rows]
+
+    def save_checkpoint(
+        self,
+        run_id: str,
+        status: str,
+        payload: dict[str, Any],
+        artifact_hash: str | None = None,
+    ) -> None:
+        if status not in CHECKPOINT_STATUSES:
+            raise ValueError(f"Invalid checkpoint status {status!r}")
+        encoded = json.dumps(payload, sort_keys=True)
+        self.db.execute(
+            """INSERT INTO checkpoints(run_id, status, payload, artifact_hash)
+               VALUES (?, ?, ?, ?)
+               ON CONFLICT(run_id) DO UPDATE SET status=excluded.status,
+                 payload=excluded.payload, artifact_hash=excluded.artifact_hash,
+                 updated_at=CURRENT_TIMESTAMP""",
+            (run_id, status, encoded, artifact_hash),
+        )
+        self.db.commit()
+
+    def load_checkpoint(self, run_id: str) -> dict[str, Any] | None:
+        row = self.db.execute(
+            "SELECT status, payload, artifact_hash, updated_at FROM checkpoints WHERE run_id=?",
+            (run_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        try:
+            payload = json.loads(row["payload"])
+        except (json.JSONDecodeError, TypeError) as exc:
+            raise RuntimeError(f"Checkpoint {run_id} contains invalid JSON") from exc
+        if not isinstance(payload, dict):
+            raise TypeError(f"Checkpoint {run_id} payload must be an object")
+        return {
+            "status": row["status"],
+            "payload": payload,
+            "artifact_hash": row["artifact_hash"],
+            "updated_at": row["updated_at"],
+        }
+
+    def list_checkpoints(self, *, limit: int = 50) -> list[dict[str, Any]]:
+        if not 1 <= limit <= 200:
+            raise ValueError("Checkpoint list limit must be between one and 200")
+        rows = self.db.execute(
+            "SELECT run_id, status, payload, artifact_hash, updated_at "
+            "FROM checkpoints ORDER BY updated_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        results = []
+        for row in rows:
+            payload = json.loads(row["payload"])
+            results.append(
+                {
+                    "run_id": row["run_id"],
+                    "status": row["status"],
+                    "artifact_hash": row["artifact_hash"],
+                    "updated_at": row["updated_at"],
+                    "goal": payload.get("goal", {}),
+                    "next_stage": payload.get("next_stage", 0),
+                    "stage_count": len(payload.get("results", [])),
+                }
+            )
+        return results
+
+    def approve(self, run_id: str, artifact_hash: str, approver: str) -> None:
+        if not approver.strip():
+            raise ValueError("Approver identity cannot be empty")
+        self.db.execute(
+            "INSERT OR IGNORE INTO approvals(run_id, artifact_hash, approver) VALUES (?, ?, ?)",
+            (run_id, artifact_hash, approver.strip()),
+        )
+        self.db.commit()
+
+    def save_outcome(self, outcome_id: str, status: str, payload: dict[str, Any]) -> None:
+        self.db.execute(
+            """INSERT INTO outcomes(outcome_id, status, payload) VALUES (?, ?, ?)
+               ON CONFLICT(outcome_id) DO UPDATE SET status=excluded.status,
+                 payload=excluded.payload, updated_at=CURRENT_TIMESTAMP""",
+            (outcome_id, status, json.dumps(payload, sort_keys=True)),
+        )
+        self.db.commit()
+
+    def get_outcome(self, outcome_id: str) -> dict[str, Any] | None:
+        row = self.db.execute(
+            "SELECT outcome_id, status, payload, created_at, updated_at FROM outcomes WHERE outcome_id=?",
+            (outcome_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return {**dict(row), "payload": json.loads(row["payload"])}
+
+    def list_outcomes(self, limit: int = 50) -> list[dict[str, Any]]:
+        if not 1 <= limit <= 200:
+            raise ValueError("Outcome list limit must be between one and 200")
+        rows = self.db.execute(
+            "SELECT outcome_id, status, payload, created_at, updated_at "
+            "FROM outcomes ORDER BY updated_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [{**dict(row), "payload": json.loads(row["payload"])} for row in rows]
+
+    def add_observation(self, observation: dict[str, Any]) -> None:
+        self.db.execute(
+            """INSERT INTO outcome_observations(
+                 observation_id, outcome_id, metric_name, value, payload, observed_at
+               ) VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                observation["id"],
+                observation["outcome_id"],
+                observation["metric_name"],
+                observation["value"],
+                json.dumps(observation, sort_keys=True),
+                observation["observed_at"],
+            ),
+        )
+        self.db.commit()
+
+    def outcome_observations(self, outcome_id: str) -> list[dict[str, Any]]:
+        rows = self.db.execute(
+            "SELECT payload FROM outcome_observations WHERE outcome_id=? ORDER BY observed_at, rowid",
+            (outcome_id,),
+        ).fetchall()
+        return [json.loads(row["payload"]) for row in rows]
+
+    def record_outcome_decision(
+        self, decision_id: str, outcome_id: str, kind: str, payload: dict[str, Any]
+    ) -> None:
+        self.db.execute(
+            "INSERT INTO outcome_decisions(decision_id, outcome_id, kind, payload) VALUES (?, ?, ?, ?)",
+            (decision_id, outcome_id, kind, json.dumps(payload, sort_keys=True)),
+        )
+        self.db.commit()
+
+    def outcome_decisions(self, outcome_id: str) -> list[dict[str, Any]]:
+        rows = self.db.execute(
+            "SELECT decision_id, kind, payload, created_at FROM outcome_decisions "
+            "WHERE outcome_id=? ORDER BY created_at, rowid",
+            (outcome_id,),
+        ).fetchall()
+        return [{**dict(row), "payload": json.loads(row["payload"])} for row in rows]
+
+    def record_action_decision(
+        self,
+        action_id: str,
+        outcome_id: str,
+        authorization: str,
+        payload: dict[str, Any],
+    ) -> None:
+        self.db.execute(
+            "INSERT INTO action_ledger(action_id, outcome_id, authorization, payload) VALUES (?, ?, ?, ?)",
+            (action_id, outcome_id, authorization, json.dumps(payload, sort_keys=True)),
+        )
+        self.db.commit()
+
+    def outcome_actions(self, outcome_id: str) -> list[dict[str, Any]]:
+        rows = self.db.execute(
+            "SELECT action_id, authorization, payload, created_at FROM action_ledger "
+            "WHERE outcome_id=? ORDER BY created_at, rowid",
+            (outcome_id,),
+        ).fetchall()
+        return [{**dict(row), "payload": json.loads(row["payload"])} for row in rows]
+
+    def close(self) -> None:
+        self.db.close()
