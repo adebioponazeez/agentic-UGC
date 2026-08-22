@@ -1,0 +1,130 @@
+{
+  "workflow_id": "PRODUCT_FACTORY",
+  "version": "v1.0.0",
+  "description": "Convert content signals and audience problems into validated digital products and agentic MVPs.",
+  "phases": [
+    {
+      "phase_name": "SIGNAL_DETECTION",
+      "state_transition": "MEASURE → DIAGNOSE",
+      "agent_assigned": "OMEGA-E4",
+      "input": "Audience behavior patterns, comment clusters, search signals, retention curves from content outputs",
+      "action": "Identify validated content signals that indicate customer problems worthy of product solutions",
+      "memory_operations": {
+        "read": ["AUDIENCE", "CREATIVE", "WORLD"],
+        "write": ["AUDIENCE"]
+      },
+      "output_contract": "content_signal_report.json",
+      "failure_conditions": ["No validated signal (retention < 30% + no positive sentiment + no search signal) = abandon signal tracking"],
+      "gate_required": false
+    },
+    {
+      "phase_name": "PROBLEM_CLUSTER",
+      "state_transition": "DIAGNOSE → HYPOTHESIZE",
+      "agent_assigned": "OMEGA-D1",
+      "input": "Validated content signal from E4",
+      "action": "Diagnose the underlying problem the signal reveals; design customer interview protocol",
+      "memory_operations": {
+        "read": ["AUDIENCE", "STRATEGIC", "FAILURE"],
+        "write": ["STRATEGIC", "FAILURE"]
+      },
+      "output_contract": "problem_cluster.json + interview_protocol.md",
+      "failure_conditions": ["Diagnosis stops at symptom layer = rework; no interview protocol = abort"],
+      "gate_required": false
+    },
+    {
+      "phase_name": "CUSTOMER_INTERVIEW",
+      "state_transition": "HYPOTHESIZE → CHALLENGE",
+      "agent_assigned": "OMEGA-P4",
+      "input": "Interview protocol from D1 + audience segments from E4",
+      "action": "Execute structured interviews; analyze responses; synthesize insights",
+      "memory_operations": {
+        "read": ["AUDIENCE"],
+        "write": ["AUDIENCE", "STRATEGIC", "OPERATIONAL"]
+      },
+      "output_contract": "interview_analysis.json + insight_summary.md",
+      "failure_conditions": ["No structured analysis = abort; no memory updates = abort"],
+      "gate_required": false
+    },
+    {
+      "phase_name": "SOLUTION_HYPOTHESIS",
+      "state_transition": "CHALLENGE → PRIORITIZE",
+      "agent_assigned": "OMEGA-P1",
+      "input": "Diagnosis + interview analysis + content strategy (from C1 if available)",
+      "action": "Design product hypothesis: value prop, features, price, presell mechanism",
+      "memory_operations": {
+        "read": ["STRATEGIC", "CREATIVE", "FAILURE", "WORLD"],
+        "write": ["STRATEGIC"]
+      },
+      "output_contract": "product_hypothesis.json",
+      "failure_conditions": ["No content signal reference = abort; no presell mechanism = abort; missing failure conditions = abort"],
+      "gate_required": false
+    },
+    {
+      "phase_name": "MVP_PRODUCTION",
+      "state_transition": "PRIORITIZE → DESIGN → SIMULATE → PRODUCE",
+      "agent_assigned": "OMEGA-P2",
+      "input": "Product hypothesis + design specs",
+      "action": "Build MVP (Next.js + Stripe + database); include analytics hooks; ensure rollback mechanism",
+      "memory_operations": {
+        "read": ["OPERATIONAL", "FAILURE"],
+        "write": ["OPERATIONAL", "WORLD"]
+      },
+      "output_contract": "deployed_url + config.json + analytics_hooks_checklist.md",
+      "failure_conditions": ["No analytics hooks = stop; exceeds 7-day budget = stop; no rollback mechanism = stop"],
+      "gate_required": true
+    },
+    {
+      "phase_name": "PRESALE",
+      "state_transition": "PRODUCE → VERIFY → PACKAGE → DISTRIBUTE",
+      "agent_assigned": "OMEGA-E2",
+      "input": "MVP deployed + presell funnel design",
+      "action": "Launch presell page; activate tracking; connect to content funnel",
+      "memory_operations": {
+        "read": ["OPERATIONAL", "AUDIENCE"],
+        "write": ["AUDIENCE", "OPERATIONAL"]
+      },
+      "output_contract": "presell_url + conversion_tracking_config.json",
+      "failure_conditions": ["No tracking hooks = abort; no connection to content = rework"],
+      "gate_required": true
+    },
+    {
+      "phase_name": "CUSTOMER_DATA",
+      "state_transition": "DISTRIBUTE → MEASURE → DIAGNOSE",
+      "agent_assigned": "OMEGA-P4",
+      "input": "Conversion data + customer feedback",
+      "action": "Analyze product performance; update strategic and creative memory; propose evolution",
+      "memory_operations": {
+        "read": ["AUDIENCE", "STRATEGIC", "CREATIVE", "FAILURE"],
+        "write": ["STRATEGIC", "CREATIVE", "FAILURE"]
+      },
+      "output_contract": "product_insight.json + next_version_proposal.json",
+      "failure_conditions": ["No insight = abort; no evolution proposal = abort; failure not recorded = abort"],
+      "gate_required": false
+    },
+    {
+      "phase_name": "AGENTIC_MVP",
+      "state_transition": "LEARN → STORE → REINVEST → SCALE",
+      "agent_assigned": "OMEGA-P1 + OMEGA-0",
+      "input": "Validated product data + strategic memory + audience patterns",
+      "action": "Design and build agent-based layer (automation, AI assistant, intelligence layer) that compounds value",
+      "memory_operations": {
+        "read": ["ALL"],
+        "write": ["OPERATIONAL", "CREATIVE", "STRATEGIC", "FAILURE"]
+      },
+      "output_contract": "agentic_layer_plan.json + deployed_agentic_layer_url",
+      "failure_conditions": ["No strategic alignment = abort; no stress test = abort; no rollback = abort"],
+      "gate_required": true
+    }
+  ],
+  "success_criteria": {
+    "signal_validation": "Retention > 50% at 15 sec + positive sentiment > 0.7 + search signal present",
+    "interview_insight": "At least 3 structured insights from interviews; at least 1 unexpected finding",
+    "product_validation": "Conversion rate > baseline; retention > 30 days; feedback score > 0.7",
+    "agentic_layer": "Agent activation < 30 sec; context pollution < 0.3; quality score > 0.6"
+  },
+  "rollback_references": [
+    "product_hypothesis_rollback",
+    "mvp_deployment_rollback",
+    "agentic_layer_rollback"
+  ]
+}
