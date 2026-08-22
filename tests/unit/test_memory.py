@@ -22,6 +22,52 @@ class MemoryStoreTests(unittest.TestCase):
             finally:
                 store.close()
 
+    def test_v1_database_migrates_to_v2_without_losing_events(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "v1.db"
+            db = sqlite3.connect(path)
+            db.executescript(
+                """
+                CREATE TABLE events (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  run_id TEXT NOT NULL, stage TEXT NOT NULL, kind TEXT NOT NULL,
+                  payload TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE lessons (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, domain TEXT NOT NULL,
+                  lesson TEXT NOT NULL, score REAL NOT NULL, evidence TEXT NOT NULL,
+                  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE checkpoints (
+                  run_id TEXT PRIMARY KEY, status TEXT NOT NULL, payload TEXT NOT NULL,
+                  artifact_hash TEXT, updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE approvals (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT NOT NULL,
+                  artifact_hash TEXT NOT NULL, approver TEXT NOT NULL,
+                  created_at TEXT DEFAULT CURRENT_TIMESTAMP, UNIQUE(run_id, artifact_hash)
+                );
+                INSERT INTO events(run_id, stage, kind, payload)
+                  VALUES ('legacy', 'stage', 'kept', '{"value": 1}');
+                PRAGMA user_version=1;
+                """
+            )
+            db.close()
+            store = MemoryStore(path)
+            try:
+                self.assertEqual(store.schema_version, DATABASE_SCHEMA_VERSION)
+                self.assertEqual(store.events("legacy")[0]["payload"], {"value": 1})
+                tables = {
+                    row[0]
+                    for row in store.db.execute(
+                        "SELECT name FROM sqlite_master WHERE type='table'"
+                    ).fetchall()
+                }
+                self.assertIn("outcomes", tables)
+                self.assertIn("action_ledger", tables)
+            finally:
+                store.close()
+
     def test_newer_database_fails_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "future.db"

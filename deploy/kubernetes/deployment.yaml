@@ -16,7 +16,7 @@ spec:
         seccompProfile: {type: RuntimeDefault}
       containers:
         - name: api
-          image: ghcr.io/replace/tetrative:0.3.0
+          image: ghcr.io/replace/tetrative:220.0.0
           ports:
             - {name: http, containerPort: 8000}
           env:

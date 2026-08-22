@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from .models import AgentSpec, Stage
 
-WORKFLOW_VERSION = "1.1.0"
+WORKFLOW_VERSION = "220.0.0"
 
 
 COMMON_GUARDRAIL = """
@@ -55,6 +55,15 @@ WORKFLOWS: dict[str, tuple[Stage, ...]] = {
         Stage("product_and_gtm", "creator", "Create offer, landing-page narrative, outreach, demo story, and launch assets.", ("venture_thesis",)),
         Stage("operating_system", "operator", "Create delivery, sales, support, instrumentation, and deployment runbooks.", ("product_and_gtm",), True),
         Stage("board_memo", "synthesizer", "Synthesize decision, dissent, risks, capital allocation, and next gates.", ("operating_system",)),
+    ),
+    "outcome": (
+        Stage("profound_diagnosis", "diagnostician", "Diagnose the expectation-reality gap, causal bottleneck, metric baseline, and falsifiable outcome."),
+        Stage("epistemic_ledger", "researcher", "Separate observations, sourced evidence, assumptions, forecasts, contradictions, and unknowns.", ("profound_diagnosis",)),
+        Stage("scenario_council", "strategist", "Model base, upside, downside, adversarial, and regime-change scenarios with leading indicators.", ("epistemic_ledger",)),
+        Stage("option_portfolio", "strategist", "Create reversible strategic bets with impact, confidence, information value, owner, cost, and kill criteria.", ("scenario_council",)),
+        Stage("capital_allocation", "operator", "Allocate capital, time, tools, and risk budgets across the option portfolio without violating guardrails.", ("option_portfolio",)),
+        Stage("execution_campaign", "operator", "Build a 30-day traction campaign, 12-month compounding system, and 2030 option roadmap with approval and rollback.", ("capital_allocation",), True),
+        Stage("feedback_control", "synthesizer", "Define observation cadence, trajectory thresholds, and amplify, continue, adapt, pivot, pause, or stop rules.", ("execution_campaign",)),
     ),
     "ecosystem": (
         Stage("root_diagnosis", "diagnostician", "Diagnose the ecosystem's profound problem, stakeholders, causes, and falsifiable outcomes."),

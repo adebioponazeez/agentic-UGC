@@ -4,6 +4,13 @@
 
 ### Added
 
+- Version 220 strategic outcome contracts and outcome-first cognitive workflow.
+- Simultaneous 30-day, 365-day, and 1,460-day milestone trajectories.
+- Strategic bet scoring, budget-constrained option allocation, and kill criteria.
+- Observation-driven amplify/continue/adapt/pivot-or-stop control loop.
+- High bounded-autonomy envelopes with allow/approval/deny action decisions.
+- Persistent outcome, observation, decision, and action ledgers in database schema v2.
+- V220 API and operator-console outcome portfolio controls.
 - Deterministic critical policy engine with stable rule IDs and remediation.
 - Fail-closed `blocked_by_policy` run state that stops downstream execution.
 - UGC rights/disclosure, grounded-citation, high-risk approval/rollback, identity, and safeguard gates.

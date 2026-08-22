@@ -1,7 +1,14 @@
-"""Tetrative Agentic OS: bounded, measurable recursive intelligence amplification."""
+"""Tetrative Version 220: observed strategic outcomes under bounded autonomy."""
 
 from .models import Goal, RunResult
 from .orchestrator import Orchestrator
+from .outcomes import StrategicOutcome, StrategicOutcomeEngine
 
-__all__ = ["Goal", "Orchestrator", "RunResult"]
-__version__ = "0.5.0"
+__all__ = [
+    "Goal",
+    "Orchestrator",
+    "RunResult",
+    "StrategicOutcome",
+    "StrategicOutcomeEngine",
+]
+__version__ = "220.0.0"

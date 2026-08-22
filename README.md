@@ -1,7 +1,8 @@
-# Tetrative Agentic OS
+# Tetrative Strategic Outcome OS · Version 220
 
-A provider-agnostic, local-first cognitive orchestration kernel for **agentic UGC**, a reusable
-**Meta-Orchestrator**, and an AI-native **venture operating system**.
+A provider-portable, human-governed operating system that converts strategic outcomes into evidence,
+option portfolios, bounded action, real observations, and continuous recalibration—across ventures,
+creator distribution, and multi-venture portfolios.
 
 > “Billion-by-billion-fold tetrative intelligence” is treated as a direction, not a fake benchmark.
 > Capability cannot be responsibly multiplied by saying it is. This system compounds **parallel
@@ -10,7 +11,12 @@ A provider-agnostic, local-first cognitive orchestration kernel for **agentic UG
 
 ## What is implemented
 
-- Four executable workflows: `meta`, `ugc`, `venture`, and an integrated `ecosystem` run
+- Version 220 strategic outcome contracts with numeric baselines, targets, guardrails, and owners
+- Simultaneous 30-day, 12-month, and 2030 horizon trajectories
+- Ranked strategic bets and capital allocation under an explicit budget
+- Real metric observations with amplify/continue/adapt/pivot-or-stop recalibration
+- High bounded-autonomy envelopes and immutable action authorization ledgers
+- Five executable workflows: `meta`, `ugc`, `venture`, `outcome`, and integrated `ecosystem`
 - Role-separated agents with explicit mandates and least-privilege tool declarations
 - Best-of-N candidate generation
 - Red-team cross-examination on every candidate
@@ -87,6 +93,7 @@ the API behind authentication, RBAC, signed approvals, and tenant isolation.
 | `meta` | root diagnosis → capability map → system design → execution plan → synthesis |
 | `ugc` | audience truth → creative strategy → content package → production → learning brief |
 | `venture` | problem-market → evidence → thesis → product/GTM → operations → board memo |
+| `outcome` | diagnosis → epistemic ledger → scenarios → options → allocation → campaign → feedback |
 | `ecosystem` | diagnosis → intelligence architecture → venture engine → UGC engine → agentic OS → charter |
 
 ## Tests
@@ -105,6 +112,8 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 - [Implemented production vertical slice](docs/03-technical-spec/production-vertical-slice.md)
 - [Identity, roles, and tenant isolation](docs/03-technical-spec/identity-and-tenancy.md)
 - [API and data contracts](docs/04-api-and-data-design/contracts.md)
+- [Version 220 strategic outcome API](docs/04-api-and-data-design/strategic-outcome-api.md)
+- [Version 220 cognitive shift](docs/01-engineering-intent/version-220-cognitive-shift.md)
 - [Test plan and release gates](docs/05-test-specification/test-plan.md)
 - [Runtime policy and domain gates](docs/05-test-specification/runtime-policy-gates.md)
 - [Threat model](docs/06-security-and-reliability/threat-model.md)

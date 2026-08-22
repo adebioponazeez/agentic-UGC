@@ -13,7 +13,9 @@ from .providers import DeterministicMockProvider, OpenAICompatibleProvider
 def parser() -> argparse.ArgumentParser:
     app = argparse.ArgumentParser(prog="tetrative", description="Run the Tetrative Agentic OS")
     app.add_argument("objective", nargs="?", help="High-level objective (omit with --resume)")
-    app.add_argument("--domain", choices=("meta", "ugc", "venture", "ecosystem"), default="meta")
+    app.add_argument(
+        "--domain", choices=("meta", "ugc", "venture", "outcome", "ecosystem"), default="meta"
+    )
     app.add_argument("--resume", metavar="RUN_ID", help="Resume a durable human-gate checkpoint")
     app.add_argument("--approve", metavar="SHA256", help="Digest of the exact artifact being approved")
     app.add_argument("--approver", help="Authenticated human identity recorded in the audit log")

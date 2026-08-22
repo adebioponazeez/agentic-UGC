@@ -18,3 +18,7 @@
 | T-014 | Done | P0 | API principal, RBAC, and tenant isolation | FR-015–017 | Role/tenant boundary tests | Security |
 | T-015 | Partial | P1 | Structured request tracing | TD-006 | Request IDs and JSON events | Operations |
 | T-016 | Done | P0 | Deterministic critical policy gates and fail-closed stopping | FR-018–019 | Policy/remediation tests | Product/safety |
+| T-017 | Done | P0 | V220 strategic outcome contracts and three-horizon plans | OUT-001–004 | Engine/API tests | Strategy |
+| T-018 | Done | P0 | Observation-driven trajectory recalibration | OUT-005–009 | Recalibration/evidence tests | Outcome owner |
+| T-019 | Done | P0 | High bounded-autonomy authorization controller | Autonomy envelope | Allow/approve/deny tests | Security/human |
+| T-020 | Done | P1 | Outcome, observation, decision, and action ledgers | OUT-007–008 | DB v1→v2 migration tests | Engineering |

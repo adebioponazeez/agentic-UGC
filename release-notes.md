@@ -1,5 +1,18 @@
 # Release notes
 
+## v220.0.0 — strategic outcome operating system
+
+Version 220 changes the system's optimization target from agent output to observed strategic outcomes.
+It introduces numeric outcome contracts, three simultaneous planning horizons, reversible option
+portfolios, budget-constrained allocation, evidence-only metric movement, continuous trajectory
+recalibration, and high bounded-autonomy action authorization.
+
+The new `/api/v220/outcomes` surface and operator console manage portfolios, observations, decisions,
+actions, and outcome-linked cognition runs. Database schema v2 preserves previous run data while
+adding immutable strategic ledgers. Application and workflow versions intentionally jump to 220.0.0;
+this denotes an architecture generation, not a fabricated intelligence benchmark.
+
+
 ## v0.5.0 — deterministic critical policy gates
 
 Quality and authorization are now separate. Stable deterministic rules block approval bypass,
