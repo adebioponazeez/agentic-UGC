@@ -15,3 +15,5 @@
 | T-011 | Done | P0 | Authenticated operator API and web console | FR-005–011 | API journey tests | Operations |
 | T-012 | Done | P1 | Integrity-verifiable UGC package exporter | FR-014 partial | ZIP manifest tests | Human publish gate |
 | T-013 | Done | P1 | Local, server, and cloud deployment references | NFR-004–008 | Docker/K8s configs | Operations |
+| T-014 | Done | P0 | API principal, RBAC, and tenant isolation | FR-015–017 | Role/tenant boundary tests | Security |
+| T-015 | Partial | P1 | Structured request tracing | TD-006 | Request IDs and JSON events | Operations |

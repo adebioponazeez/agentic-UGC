@@ -1,5 +1,19 @@
 # Release notes
 
+## v0.4.0 — identity and tenant boundary
+
+- Bearer credentials now resolve server-side to immutable subject, tenant, and role principals.
+- Viewer, operator, approver, and admin permissions are enforced by route.
+- Approval actor is derived from authentication rather than client-entered text.
+- Each local tenant receives an isolated database and artifact root.
+- Cross-tenant run and artifact access returns not found.
+- Preferred multi-principal configuration uses `TETRATIVE_API_KEYS_JSON`.
+- Every HTTP response receives a request ID and emits a secret-free structured audit event.
+
+This is production-oriented service authentication, but not yet OIDC/SSO, database row-level security,
+or distributed policy enforcement. Those remain explicit cloud-scale gates.
+
+
 ## v0.3.0 — real operator vertical slice
 
 Tetrative is now an operable application rather than only a CLI orchestration kernel.

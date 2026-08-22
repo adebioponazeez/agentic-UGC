@@ -43,7 +43,8 @@ tetrative-api
 
 The console can collect immutable public-source evidence, run all four workflows, stop at exact human
 approval gates, resume reviewed runs, inspect events, and download integrity-verifiable UGC packages.
-For CLI-only operation:
+API credentials resolve to server-side subjects, tenants, and viewer/operator/approver/admin roles;
+see [identity and tenancy](docs/03-technical-spec/identity-and-tenancy.md). For CLI-only operation:
 
 ```bash
 tetrative "Launch an evidence-led creator ecosystem for Nigerian founders" \
@@ -101,6 +102,7 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 - [Product requirements and acceptance](docs/02-product-requirements/product-requirements.md)
 - [System state machine](docs/03-technical-spec/system-and-state-machine.md)
 - [Implemented production vertical slice](docs/03-technical-spec/production-vertical-slice.md)
+- [Identity, roles, and tenant isolation](docs/03-technical-spec/identity-and-tenancy.md)
 - [API and data contracts](docs/04-api-and-data-design/contracts.md)
 - [Test plan and release gates](docs/05-test-specification/test-plan.md)
 - [Threat model](docs/06-security-and-reliability/threat-model.md)

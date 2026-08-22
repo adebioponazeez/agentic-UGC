@@ -4,6 +4,10 @@
 
 ### Added
 
+- Server-resolved API principals with subject, tenant, and roles.
+- Viewer/operator/approver/admin route authorization and tenant-isolated storage roots.
+- Authenticated approval attribution and cross-tenant run/artifact denial.
+- Request IDs and structured JSON HTTP audit events.
 - FastAPI operator service and responsive web control console.
 - Safe public-source collection, immutable evidence bundles, and grounded-run attachment.
 - Content-addressed artifact storage and integrity-verifiable UGC ZIP exports.

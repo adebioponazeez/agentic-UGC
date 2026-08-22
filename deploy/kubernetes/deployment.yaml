@@ -22,8 +22,8 @@ spec:
           env:
             - {name: TETRATIVE_ENV, value: production}
             - {name: TETRATIVE_DATA_DIR, value: /data}
-            - name: TETRATIVE_SERVER_API_KEY
-              valueFrom: {secretKeyRef: {name: tetrative-secrets, key: server-api-key}}
+            - name: TETRATIVE_API_KEYS_JSON
+              valueFrom: {secretKeyRef: {name: tetrative-secrets, key: api-keys-json}}
           readinessProbe:
             httpGet: {path: /healthz, port: http}
             initialDelaySeconds: 5

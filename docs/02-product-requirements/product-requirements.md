@@ -38,6 +38,9 @@
 | FR-012 | Execute typed tools under capability policy and idempotency. | Production P0 |
 | FR-013 | Ground research claims in source snapshots and citations. | Production P0 |
 | FR-014 | Build multimodal UGC with consent and rights provenance. | Product P2 |
+| FR-015 | Resolve credentials to server-side subject, tenant, and roles. | Production P0 |
+| FR-016 | Derive approval actor from authenticated identity, never request text. | Production P0 |
+| FR-017 | Prevent run, evidence, and artifact access across tenants. | Production P0 |
 
 ## Nonfunctional requirements
 
